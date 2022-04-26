@@ -1,0 +1,13 @@
+LIBRARY
+
+EXPORTS
+	ImageInfo_GetLastError
+
+	ImageInfo_Set_FileResolution
+	ImageInfo_Set_FileFlip
+	ImageInfo_Set_FileColorCvt
+	ImageInfo_Set_FileLigth
+	ImageInfo_Set_FileChannle
+	ImageInfo_Set_MemoryResolution
+
+	ImageInfo_Get_Attr

@@ -1,0 +1,7 @@
+LIBRARY
+
+EXPORTS
+	ImageRecognition_GetLastError
+
+	ImageRecognition_Help_QRDecodec
+	ImageRecognition_Help_QRCamera
