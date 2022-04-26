@@ -20,9 +20,18 @@ support system above windows 7sp1 and linux(ubuntu20.04,centos8)
 #### Windows
 use vs open and complie  
 
+###### Install environment
+need to vcpkg environment:https://github.com/microsoft/vcpkg,After installation, execute the following command  
+vcpkg integrate install  
+vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
+
 #### Linux
 Linux use Makefile to complie  
 supproted ubuntu x64 or centos x64  
+
+###### Install environment
+ubuntu:sudo apt install libopencv-dev libqrencode-dev -y  
+centos:sudo dnf install opencv-devel qrencode-devel -y  
 
 ##### complie
 execute command in XEngine_Source path  
