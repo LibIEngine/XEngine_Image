@@ -1,5 +1,5 @@
 [中文](README.md) ||  [English](README.en.md)  
-# XEngine_APIService
+# IEngine_Image
 This repository has a development and master branch. If you want to use it, please use the master branch  
 
 ## Introduction
@@ -21,7 +21,7 @@ support system above windows 7sp1 and linux(ubuntu20.04,centos8)
 use vs open and complie  
 
 ###### Install environment
-need to vcpkg environment:https://github.com/microsoft/vcpkg,After installation, execute the following command  
+need to vcpkg environment:https://github.com/microsoft/vcpkg After installation, execute the following command  
 vcpkg integrate install  
 vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
 

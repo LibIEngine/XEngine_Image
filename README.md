@@ -1,5 +1,5 @@
 [中文](README.md) ||  [English](README.en.md)  
-# XEngine_Image
+# IEngine_Image
 本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
 
 ## 介绍
@@ -21,7 +21,7 @@ c c++ image recognition library  image processing library
 使用VS打开并且编译
 
 ###### 安装环境
-需要vcpkg配置环境:https://github.com/microsoft/vcpkg,安装好后执行下面的命令安装  
+需要vcpkg配置环境:https://github.com/microsoft/vcpkg 安装好后执行下面的命令安装  
 vcpkg integrate install  
 vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
 
