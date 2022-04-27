@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/utils/logger.hpp>
 #include <opencv2/wechat_qrcode.hpp>

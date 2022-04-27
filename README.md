@@ -17,13 +17,13 @@ c c++ image recognition library  image processing library
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
 
-#### Windows
-使用VS打开并且编译
-
-###### 安装环境
+#### 安装环境
 需要vcpkg配置环境:https://github.com/microsoft/vcpkg 安装好后执行下面的命令安装  
 vcpkg integrate install  
 vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
+
+#### Windows
+使用VS打开并且编译
 
 ###### 直接使用
 如果你不想编译,可以直接使用IEngine_Release下面的模块和头文件.
@@ -31,10 +31,6 @@ vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows
 #### Linux
 Linux使用Makefile编译  
 UBUNTU20.04 x64或者CENTOS8 x64均可  
-
-###### 安装环境
-ubuntu:sudo apt install libopencv-contrib-dev libqrencode-dev -y  
-centos:sudo dnf install opencv-devel qrencode-devel -y  
 
 ##### 编译命令
 在XEngine_Source目录下执行命令  

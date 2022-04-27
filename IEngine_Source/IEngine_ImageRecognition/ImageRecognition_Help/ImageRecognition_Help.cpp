@@ -112,7 +112,7 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QREncodec(LPCTSTR lpszFileNam
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer)
+BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
 {
 	Image_IsErrorOccur = FALSE;
 
@@ -122,13 +122,9 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_PARAMENT;
 		return FALSE;
 	}
+	vector<cv::Mat> m_MatPoint;
 	cv::Ptr<cv::wechat_qrcode::WeChatQRCode> m_QRDetector;
-	string m_DetectDetectProto = "./detect.prototxt";
-	string m_DetectDetectCaffe = "./detect.caffemodel";
-	string m_DetectSrProto = "./sr.prototxt";
-	string m_DetectSrCaffe = "./sr.caffemodel";
-
-	vector<cv::Mat> m_MatPoint;   
+	
 #ifdef _UNICODE
 	USES_CONVERSION;
 	cv::Mat m_Frame = cv::imread(W2A(lpszMsgBuffer));
@@ -142,13 +138,23 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_EMPTY;
 		return FALSE;
 	}
-
-	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(m_DetectDetectProto, m_DetectDetectCaffe, m_DetectSrProto, m_DetectSrCaffe);
-	vector<string> stl_VectorQRList = detector->detectAndDecode(m_Frame, m_MatPoint);
 #ifdef _UNICODE
-	wcscpy(ptszMsgBuffer, A2W(m_QRText.c_str()));
+	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(W2A(lpszDetectProto), W2A(lpszDetectModel), W2A(lpszSrProto), W2A(lpszSrModel));
 #else
-	strcpy(ptszMsgBuffer, m_QRText.c_str());
+	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
+#endif
+	vector<string> stl_VectorQRList = m_QRDetector->detectAndDecode(m_Frame, m_MatPoint);
+
+	if (stl_VectorQRList.empty())
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_NOTQR;
+		return FALSE;
+	}
+#ifdef _UNICODE
+	wcscpy(ptszMsgBuffer, A2W(stl_VectorQRList[0].c_str()));
+#else
+	strcpy(ptszMsgBuffer, stl_VectorQRList[0].c_str());
 #endif
 	return TRUE;
 }

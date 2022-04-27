@@ -33,9 +33,9 @@ extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lp
 {
 	return m_ImageHelp.ImageRecognition_Help_QREncodec(lpszFileName, lpszMsgBuffer);
 }
-extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR * ptszMsgBuffer)
+extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
 {
-	return m_ImageHelp.ImageRecognition_Help_QRDecodec(lpszMsgBuffer, pInt_MsgLen, ptszMsgBuffer);
+	return m_ImageHelp.ImageRecognition_Help_QRDecodec(lpszMsgBuffer, pInt_MsgLen, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
 }
 extern "C" BOOL ImageRecognition_Help_QRCamera(TCHAR * ptszMsgBuffer, int nDeviceID, int nTimeout)
 {
