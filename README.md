@@ -23,7 +23,8 @@ vcpkg integrate install
 vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
 
 #### Windows
-使用VS打开并且编译
+使用VS打开并且编译  
+字符集:Unicode  
 
 ###### 直接使用
 如果你不想编译,可以直接使用IEngine_Release下面的模块和头文件.

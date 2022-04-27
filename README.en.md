@@ -24,6 +24,7 @@ vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows
 
 #### Windows
 use vs open and complie  
+Charset:Unicode  
 
 ###### Use directly
 if you don't want to complie,you can directly use to header and module in IEngine_Release.
