@@ -22,6 +22,74 @@ CImageRecognition_Help::~CImageRecognition_Help()
 //                        公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
+函数名称：ImageRecognition_Help_QREncodec
+函数功能：二维码生成器
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要生成的图片位置
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要编码的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CImageRecognition_Help::ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lpszMsgBuffer)
+{
+	Image_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszFileName) || (NULL == lpszMsgBuffer))
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_PARAMENT;
+		return FALSE;
+	}
+	//使用qrencode进行字符串编码
+#ifdef _UNICODE
+	USES_CONVERSION;
+	QRcode* pSt_QRCodec = QRcode_encodeString(W2A(lpszMsgBuffer), 0, QR_ECLEVEL_H, QR_MODE_8, 1);
+#else
+	QRcode* pSt_QRCodec = QRcode_encodeString(lpszMsgBuffer, 0, QR_ECLEVEL_H, QR_MODE_8, 1);
+#endif
+	if (NULL == pSt_QRCodec)
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_FAILED;
+		return FALSE;
+	}
+	cv::Mat m_SrcFrame;
+	//转换数据
+	m_SrcFrame = cv::Mat(pSt_QRCodec->width, pSt_QRCodec->width, CV_8U);
+	for (int i = 0; i < pSt_QRCodec->width; ++i)
+	{
+		for (int j = 0; j < pSt_QRCodec->width; ++j)
+		{
+			m_SrcFrame.at<uchar>(i, j) = (pSt_QRCodec->data[i * pSt_QRCodec->width + j] & 0x01) == 0x01 ? 0 : 255;
+		}
+	}
+	//调整大小
+	cv::resize(m_SrcFrame, m_SrcFrame, cv::Size(m_SrcFrame.rows * 10, m_SrcFrame.cols * 10), 0, 0, cv::INTER_NEAREST);
+	//转换成彩色
+	cv::cvtColor(m_SrcFrame, m_SrcFrame, cv::COLOR_GRAY2BGR);
+#ifdef _UNICODE
+	//USES_CONVERSION;
+	if (!cv::imwrite(W2A(lpszFileName), m_SrcFrame))
+#else
+	if (!cv::imwrite(lpszFileName, m_SrcFrame))
+#endif
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_WRITE;
+		return FALSE;
+	}
+	return TRUE;
+}
+/********************************************************************
 函数名称：ImageRecognition_Help_QRDecodec
 函数功能：QR二维码解析器
  参数.一：lpszMsgBuffer
@@ -54,28 +122,19 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_PARAMENT;
 		return FALSE;
 	}
-	cv::Mat m_Frame;
-	if (NULL != pInt_MsgLen)
-	{
-		//读取到内存
+	cv::Ptr<cv::wechat_qrcode::WeChatQRCode> m_QRDetector;
+	string m_DetectDetectProto = "./detect.prototxt";
+	string m_DetectDetectCaffe = "./detect.caffemodel";
+	string m_DetectSrProto = "./sr.prototxt";
+	string m_DetectSrCaffe = "./sr.caffemodel";
+
+	vector<cv::Mat> m_MatPoint;   
 #ifdef _UNICODE
-		USES_CONVERSION;
-		cv::_InputArray m_InputArray(W2A(lpszMsgBuffer), *pInt_MsgLen);
+	USES_CONVERSION;
+	cv::Mat m_Frame = cv::imread(W2A(lpszMsgBuffer));
 #else
-		cv::_InputArray m_InputArray(lpszMsgBuffer, *pInt_MsgLen);
+	cv::Mat m_Frame = cv::imread(lpszMsgBuffer);
 #endif
-		m_Frame = cv::imdecode(m_InputArray, cv::IMREAD_UNCHANGED);
-	}
-	else
-	{
-		//读取文件
-#ifdef _UNICODE
-		USES_CONVERSION;
-		m_Frame = cv::imread(W2A(lpszMsgBuffer));
-#else
-		m_Frame = cv::imread(lpszMsgBuffer);
-#endif
-	}
 	//是否成功
 	if (m_Frame.empty())
 	{
@@ -83,23 +142,14 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_EMPTY;
 		return FALSE;
 	}
-	//QR检测
-	cv::QRCodeDetector m_QRCodeDetector;
-	std::vector<cv::Point> stl_VectorPoint;
-	cv::Mat m_ImgStart;
 
-	std::string m_QRText = m_QRCodeDetector.detectAndDecode(m_Frame, stl_VectorPoint, m_ImgStart);
-	if (NULL != pInt_MsgLen)
-	{
-		*pInt_MsgLen = m_QRText.length();
-	}
+	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(m_DetectDetectProto, m_DetectDetectCaffe, m_DetectSrProto, m_DetectSrCaffe);
+	vector<string> stl_VectorQRList = detector->detectAndDecode(m_Frame, m_MatPoint);
 #ifdef _UNICODE
-	USES_CONVERSION;
 	wcscpy(ptszMsgBuffer, A2W(m_QRText.c_str()));
 #else
 	strcpy(ptszMsgBuffer, m_QRText.c_str());
 #endif
-	
 	return TRUE;
 }
 /********************************************************************

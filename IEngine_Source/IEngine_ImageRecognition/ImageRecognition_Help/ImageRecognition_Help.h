@@ -18,6 +18,7 @@ public:
 	CImageRecognition_Help();
 	~CImageRecognition_Help();
 public:
+	BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lpszMsgBuffer);
 	BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer);
 	BOOL ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer, int nDeviceID = 0, int nTimeout = 3);
 protected:

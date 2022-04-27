@@ -29,6 +29,10 @@ extern "C" DWORD ImageRecognition_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                          图像识别帮助函数                            */
 /************************************************************************/
+extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lpszMsgBuffer)
+{
+	return m_ImageHelp.ImageRecognition_Help_QREncodec(lpszFileName, lpszMsgBuffer);
+}
 extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR * ptszMsgBuffer)
 {
 	return m_ImageHelp.ImageRecognition_Help_QRDecodec(lpszMsgBuffer, pInt_MsgLen, ptszMsgBuffer);

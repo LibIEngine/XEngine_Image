@@ -25,6 +25,9 @@ need to vcpkg environment:https://github.com/microsoft/vcpkg After installation,
 vcpkg integrate install  
 vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
 
+###### Use directly
+if you don't want to complie,you can directly use to header and module in IEngine_Release.
+
 #### Linux
 Linux use Makefile to complie  
 supproted ubuntu x64 or centos x64  

@@ -18,6 +18,25 @@ extern "C" DWORD ImageRecognition_GetLastError(int *pInt_SysError = NULL);
 /*                          图像识别帮助函数                            */
 /************************************************************************/
 /********************************************************************
+函数名称：ImageRecognition_Help_QREncodec
+函数功能：二维码生成器
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要生成的图片位置
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要编码的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lpszMsgBuffer);
+/********************************************************************
 函数名称：ImageRecognition_Help_QRDecodec
 函数功能：QR二维码解析器
  参数.一：lpszMsgBuffer
