@@ -60,7 +60,7 @@ extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lp
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel);
+extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel);
 /********************************************************************
 函数名称：ImageRecognition_Help_QRCamera
 函数功能：识别摄像头的二维码
@@ -84,4 +84,4 @@ extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt
   意思：是否成功
 备注：此函数会死锁直到识别或者超时
 *********************************************************************/
-extern "C" BOOL ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer, int nDeviceID = 0, int nTimeout = 3);
+extern "C" BOOL ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel, int nDeviceID = 0, int nTimeout = 3);

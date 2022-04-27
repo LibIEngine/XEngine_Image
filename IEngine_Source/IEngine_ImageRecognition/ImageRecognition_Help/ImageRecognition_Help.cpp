@@ -112,7 +112,7 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QREncodec(LPCTSTR lpszFileNam
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
+BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
 {
 	Image_IsErrorOccur = FALSE;
 
@@ -122,15 +122,20 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_PARAMENT;
 		return FALSE;
 	}
+	cv::Mat m_Frame;
 	vector<cv::Mat> m_MatPoint;
 	cv::Ptr<cv::wechat_qrcode::WeChatQRCode> m_QRDetector;
 	
-#ifdef _UNICODE
-	USES_CONVERSION;
-	cv::Mat m_Frame = cv::imread(W2A(lpszMsgBuffer));
-#else
-	cv::Mat m_Frame = cv::imread(lpszMsgBuffer);
-#endif
+	if (NULL == pInt_MsgLen)
+	{
+		m_Frame = cv::imread(lpszMsgBuffer);
+	}
+	else
+	{
+		cv::_InputArray m_InputArray(lpszMsgBuffer, *pInt_MsgLen);
+		m_Frame = cv::imdecode(m_InputArray, cv::IMREAD_UNCHANGED);
+	}
+
 	//是否成功
 	if (m_Frame.empty())
 	{
@@ -139,6 +144,7 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
 		return FALSE;
 	}
 #ifdef _UNICODE
+	USES_CONVERSION;
 	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(W2A(lpszDetectProto), W2A(lpszDetectModel), W2A(lpszSrProto), W2A(lpszSrModel));
 #else
 	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
@@ -181,7 +187,7 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCTSTR lpszMsgBuff
   意思：是否成功
 备注：此函数会死锁直到识别或者超时
 *********************************************************************/
-BOOL CImageRecognition_Help::ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer, int nDeviceID /* = 0 */, int nTimeout /* = 3 */)
+BOOL CImageRecognition_Help::ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel, int nDeviceID /* = 0 */, int nTimeout /* = 3 */)
 {
 	Image_IsErrorOccur = FALSE;
 
@@ -200,12 +206,12 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer
 		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_OPEN;
 		return FALSE;
 	}
-	cv::Mat m_Frame;
+	cv::Mat m_SrcFrame;
 	time_t nTimeStart = time(NULL);
 	int64_t nTimeCheck = clock();
-	while (m_VideoCapture.read(m_Frame))
+	while (m_VideoCapture.read(m_SrcFrame))
 	{
-		if (m_Frame.empty())
+		if (m_SrcFrame.empty())
 		{
 			Image_IsErrorOccur = TRUE;
 			Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_EMPTY;
@@ -214,19 +220,15 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer
 		//每500毫秒读取一次
 		if ((nTimeCheck - clock()) > 500)
 		{
-			cv::QRCodeDetector m_QRCodeDetector;
-			std::vector<cv::Point> stl_VectorPoint;
-			cv::Mat m_ImgStart;
-			//识别
-			std::string m_QRText = m_QRCodeDetector.detectAndDecode(m_Frame, stl_VectorPoint, m_ImgStart);
-			if (!m_QRText.empty())
+			std::vector<uchar> stl_VectorBuffer;
+			std::vector<int> stl_VectorParam(2);
+			stl_VectorParam[0] = cv::IMWRITE_JPEG_QUALITY;
+			stl_VectorParam[1] = 80;        
+
+			cv::imencode(".jpg", m_SrcFrame, stl_VectorBuffer, stl_VectorParam);
+			int nSize = stl_VectorBuffer.size();
+			if (ImageRecognition_Help_QRDecodec((LPCSTR)stl_VectorBuffer.data(), &nSize, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel))
 			{
-#ifdef _UNICODE
-				USES_CONVERSION;
-				wcscpy(ptszMsgBuffer, A2W(m_QRText.c_str()));
-#else
-				strcpy(ptszMsgBuffer, m_QRText.c_str());
-#endif
 				break;
 			}
 			nTimeCheck = clock();
