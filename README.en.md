@@ -20,7 +20,7 @@ support system above windows 7sp1 and linux(ubuntu20.04,centos8)
 #### Install environment
 need to vcpkg environment:https://github.com/microsoft/vcpkg After installation, execute the following command  
 vcpkg integrate install  
-vcpkg.exe install opencv libqrencode opencv:x64-windows libqrencode:x64-windows  
+vcpkg.exe install opencv[contrib] libqrencode opencv[contrib]:x64-windows libqrencode:x64-windows  
 
 #### Windows
 use vs open and complie  
