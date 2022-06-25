@@ -90,29 +90,134 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QREncodec(LPCTSTR lpszFileNam
 	return TRUE;
 }
 /********************************************************************
-函数名称：ImageRecognition_Help_QRDecodec
-函数功能：QR二维码解析器
- 参数.一：lpszMsgBuffer
+函数名称：ImageRecognition_Help_QRDecodecFile
+函数功能：从文件解码二维码
+ 参数.一：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入文件或者内存
- 参数.二：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：Y
-  意思：如果为NULL,参数一表示文件路径,否则输入内存大小,并且输出二维码字符串大小
- 参数.三：ptszMsgBuffer
+  意思：输入要解析的图片地址
+ 参数.二：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出识别到的内容
+ 参数.三：lpszDetectProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.四：lpszDetectModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.五：lpszSrProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.六：lpszSrModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
+BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodecFile(LPCTSTR lpszFileName, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
+{
+	Image_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszFileName) || (NULL == ptszMsgBuffer))
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_PARAMENT;
+		return FALSE;
+	}
+	cv::Mat m_Frame;
+	vector<cv::Mat> m_MatPoint;
+	cv::Ptr<cv::wechat_qrcode::WeChatQRCode> m_QRDetector;
+	
+#ifdef _UNICODE
+	USES_CONVERSION;
+	m_Frame = cv::imread(W2A(lpszFileName));
+#else
+	m_Frame = cv::imread(lpszFileName);
+#endif // _UNICODE
+	//是否成功
+	if (m_Frame.empty())
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_EMPTY;
+		return FALSE;
+	}
+#ifdef _UNICODE
+	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(W2A(lpszDetectProto), W2A(lpszDetectModel), W2A(lpszSrProto), W2A(lpszSrModel));
+#else
+	m_QRDetector = cv::makePtr<cv::wechat_qrcode::WeChatQRCode>(lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
+#endif
+	vector<string> stl_VectorQRList = m_QRDetector->detectAndDecode(m_Frame, m_MatPoint);
+
+	if (stl_VectorQRList.empty())
+	{
+		Image_IsErrorOccur = TRUE;
+		Image_dwErrorCode = ERROR_XENGINE_IMAGE_RECOGNITION_HELP_NOTQR;
+		return FALSE;
+	}
+#ifdef _UNICODE
+	wcscpy(ptszMsgBuffer, A2W(stl_VectorQRList[0].c_str()));
+#else
+	strcpy(ptszMsgBuffer, stl_VectorQRList[0].c_str());
+#endif
+	return TRUE;
+}
+/********************************************************************
+函数名称：ImageRecognition_Help_QRDecodecMemory
+函数功能：从内存解析二维码
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的图片缓冲区
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+ 参数.三：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出识别到的内容
+ 参数.四：lpszDetectProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.五：lpszDetectModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.六：lpszSrProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.七：lpszSrModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodecMemory(LPCSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
 {
 	Image_IsErrorOccur = FALSE;
 
@@ -125,17 +230,9 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffe
 	cv::Mat m_Frame;
 	vector<cv::Mat> m_MatPoint;
 	cv::Ptr<cv::wechat_qrcode::WeChatQRCode> m_QRDetector;
-	
-	if (NULL == pInt_MsgLen)
-	{
-		m_Frame = cv::imread(lpszMsgBuffer);
-	}
-	else
-	{
-		cv::_InputArray m_InputArray(lpszMsgBuffer, *pInt_MsgLen);
-		m_Frame = cv::imdecode(m_InputArray, cv::IMREAD_UNCHANGED);
-	}
 
+	cv::_InputArray m_InputArray(lpszMsgBuffer, nMsgLen);
+	m_Frame = cv::imdecode(m_InputArray, cv::IMREAD_UNCHANGED);
 	//是否成功
 	if (m_Frame.empty())
 	{
@@ -226,8 +323,7 @@ BOOL CImageRecognition_Help::ImageRecognition_Help_QRCamera(TCHAR* ptszMsgBuffer
 			stl_VectorParam[1] = 80;        
 
 			cv::imencode(".jpg", m_SrcFrame, stl_VectorBuffer, stl_VectorParam);
-			int nSize = stl_VectorBuffer.size();
-			if (ImageRecognition_Help_QRDecodec((LPCSTR)stl_VectorBuffer.data(), &nSize, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel))
+			if (ImageRecognition_Help_QRDecodecMemory((LPCSTR)stl_VectorBuffer.data(), stl_VectorBuffer.size(), ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel))
 			{
 				break;
 			}

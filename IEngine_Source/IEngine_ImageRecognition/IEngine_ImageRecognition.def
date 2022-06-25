@@ -4,5 +4,6 @@ EXPORTS
 	ImageRecognition_GetLastError
 
 	ImageRecognition_Help_QREncodec
-	ImageRecognition_Help_QRDecodec
+	ImageRecognition_Help_QRDecodecFile
+	ImageRecognition_Help_QRDecodecMemory
 	ImageRecognition_Help_QRCamera

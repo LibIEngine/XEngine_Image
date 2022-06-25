@@ -33,9 +33,13 @@ extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lp
 {
 	return m_ImageHelp.ImageRecognition_Help_QREncodec(lpszFileName, lpszMsgBuffer);
 }
-extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
+extern "C" BOOL ImageRecognition_Help_QRDecodecFile(LPCTSTR lpszFileName, TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
 {
-	return m_ImageHelp.ImageRecognition_Help_QRDecodec(lpszMsgBuffer, pInt_MsgLen, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
+	return m_ImageHelp.ImageRecognition_Help_QRDecodecFile(lpszFileName, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
+}
+extern "C" BOOL ImageRecognition_Help_QRDecodecMemory(LPCSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel)
+{
+	return m_ImageHelp.ImageRecognition_Help_QRDecodecMemory(lpszMsgBuffer, nMsgLen, ptszMsgBuffer, lpszDetectProto, lpszDetectModel, lpszSrProto, lpszSrModel);
 }
 extern "C" BOOL ImageRecognition_Help_QRCamera(TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel, int nDeviceID, int nTimeout)
 {

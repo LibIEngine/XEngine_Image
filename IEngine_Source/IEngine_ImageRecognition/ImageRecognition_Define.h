@@ -37,30 +37,46 @@ extern "C" DWORD ImageRecognition_GetLastError(int *pInt_SysError = NULL);
 *********************************************************************/
 extern "C" BOOL ImageRecognition_Help_QREncodec(LPCTSTR lpszFileName, LPCTSTR lpszMsgBuffer);
 /********************************************************************
-函数名称：ImageRecognition_Help_QRDecodec
+函数名称：ImageRecognition_Help_QRDecodecFile
 函数功能：QR二维码解析器
- 参数.一：lpszMsgBuffer
+ 参数.一：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入文件或者内存
- 参数.二：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：Y
-  意思：如果为NULL,参数一表示文件路径,否则输入内存大小,并且输出二维码字符串大小
- 参数.三：ptszMsgBuffer
+  意思：输入要解析的图片地址
+ 参数.二：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出识别到的内容
-  //余下参数是模型学习库
+ 参数.三：lpszDetectProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.四：lpszDetectModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.五：lpszSrProto
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
+ 参数.六：lpszSrModel
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：学习模型地址,参考示例
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL ImageRecognition_Help_QRDecodec(LPCSTR lpszMsgBuffer, int* pInt_MsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel);
+extern "C" BOOL ImageRecognition_Help_QRDecodecFile(LPCTSTR lpszFileName, TCHAR * ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel);
+
+extern "C" BOOL ImageRecognition_Help_QRDecodecMemory(LPCSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszMsgBuffer, LPCTSTR lpszDetectProto, LPCTSTR lpszDetectModel, LPCTSTR lpszSrProto, LPCTSTR lpszSrModel);
 /********************************************************************
 函数名称：ImageRecognition_Help_QRCamera
 函数功能：识别摄像头的二维码
